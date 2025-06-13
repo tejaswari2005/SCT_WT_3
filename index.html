@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Quiz</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #2c3e50, #3498db);
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .quiz-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+    }
+
+    .options button {
+      display: block;
+      background-color: rgba(255,255,255,0.2);
+      border: none;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
+      width: 100%;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .options button:hover {
+      background-color: rgba(255,255,255,0.4);
+    }
+
+    .correct {
+      background-color: #2ecc71 !important;
+    }
+
+    .wrong {
+      background-color: #e74c3c !important;
+    }
+
+    #next-btn, #restart-btn {
+      background-color: #2980b9;
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 1em;
+      display: none;
+    }
+
+    #score {
+      font-size: 1.3em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-box">
+    <h1>SkillCraft Quiz</h1>
+    <div id="quiz">
+      <div class="question" id="question">Press Start to Begin</div>
+      <div class="options" id="options"></div>
+      <button id="next-btn">Next</button>
+      <button id="restart-btn">Restart Quiz</button>
+      <div id="score"></div>
+    </div>
+    <button id="start-btn">Start Quiz</button>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "What does HTML stand for?", options: ["HyperText Markup Language", "Home Tool Markup Language", "Hyperlinks Text Marking Language", "Hyper Tool ML"], answer: "HyperText Markup Language" },
+      { question: "Which is used for styling web pages?", options: ["HTML", "CSS", "Java", "Python"], answer: "CSS" },
+      { question: "Which is not a JavaScript Framework?", options: ["NodeJS", "React", "Angular", "Django"], answer: "Django" },
+      { question: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style Sheets", "Colorful Style Sheets"], answer: "Cascading Style Sheets" },
+      { question: "Which HTML tag defines a hyperlink?", options: ["<a>", "<link>", "<href>", "<hlink>"], answer: "<a>" },
+      { question: "Which company developed React?", options: ["Google", "Microsoft", "Facebook", "Amazon"], answer: "Facebook" },
+      { question: "JavaScript is a ___-side programming language.", options: ["Client", "Server", "Both", "None"], answer: "Both" },
+      { question: "What does SQL stand for?", options: ["Structured Question Language", "Structured Query Language", "Stylish Question Language", "Statement Query Language"], answer: "Structured Query Language" },
+      { question: "Inside which HTML element do we put JavaScript?", options: ["<js>", "<scripting>", "<script>", "<code>"], answer: "<script>" },
+      { question: "Which symbol is used for comments in JavaScript?", options: ["//", "#", "<!-- -->", "**"], answer: "//" }
+    ];
+
+    const startBtn = document.getElementById('start-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+
+    let currentIndex = 0;
+    let score = 0;
+
+    startBtn.onclick = () => {
+      startBtn.style.display = 'none';
+      showQuestion();
+    };
+
+    nextBtn.onclick = () => {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion();
+      } else {
+        showScore();
+      }
+    };
+
+    restartBtn.onclick = () => {
+      currentIndex = 0;
+      score = 0;
+      restartBtn.style.display = 'none';
+      scoreEl.innerText = '';
+      showQuestion();
+    };
+
+    function showQuestion() {
+      resetState();
+      const currentQ = questions[currentIndex];
+      questionEl.innerText = `${currentIndex + 1}. ${currentQ.question}`;
+
+      currentQ.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.innerText = option;
+        btn.onclick = () => selectAnswer(btn, currentQ.answer);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function resetState() {
+      nextBtn.style.display = 'none';
+      optionsEl.innerHTML = '';
+    }
+
+    function selectAnswer(selectedBtn, correctAnswer) {
+      const allButtons = optionsEl.querySelectorAll('button');
+      allButtons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === correctAnswer) {
+          btn.classList.add('correct');
+        }
+      });
+
+      if (selectedBtn.innerText !== correctAnswer) {
+        selectedBtn.classList.add('wrong');
+      } else {
+        score++;
+      }
+
+      nextBtn.style.display = 'inline-block';
+    }
+
+    function showScore() {
+      questionEl.innerText = "Quiz Completed!";
+      optionsEl.innerHTML = '';
+      nextBtn.style.display = 'none';
+      scoreEl.innerText = `Your Score: ${score} out of ${questions.length}`;
+      restartBtn.style.display = 'inline-block';
+    }
+  </script>
+
+</body>
+</html>
